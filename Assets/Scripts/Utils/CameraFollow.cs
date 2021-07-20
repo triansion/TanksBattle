@@ -43,10 +43,14 @@ public class CameraFollow : MonoBehaviour
 
     private void cameraRotate()
     {
-        followAngleInHorizontal -= Input.GetAxis("Mouse X") * cameraRotateSpeed;//"Mouse X"代表鼠标横向移动增量,即鼠标向左移动时Input.GetAxis("Mouse X")返回的是负数的增量;鼠标向右移动时Input.GetAxis("Mouse X")返回的是正数的增量.因为我们希望鼠标向左移动时摄像机向左旋转,向右移动时摄像机向右旋转,又因为Unity中使用的是左手坐标系,即旋转时顺着旋转轴的正方向看过去时是顺时针为旋转时的正方向.这里我们是逆着Y轴的正方向去看,因此正方向反过来了,即逆时针为正方向,也就是说当前旋转角度的正值为向左旋转,负值为向右旋转,因此这里使用的是-=.
+        // if(Mathf.Abs(Input.GetAxis("Mouse X")) >= 0.05)
+            followAngleInHorizontal -= Input.GetAxis("Mouse X") * cameraRotateSpeed;//"Mouse X"代表鼠标横向移动增量,即鼠标向左移动时Input.GetAxis("Mouse X")返回的是负数的增量;鼠标向右移动时Input.GetAxis("Mouse X")返回的是正数的增量.因为我们希望鼠标向左移动时摄像机向左旋转,向右移动时摄像机向右旋转,又因为Unity中使用的是左手坐标系,即旋转时顺着旋转轴的正方向看过去时是顺时针为旋转时的正方向.这里我们是逆着Y轴的正方向去看,因此正方向反过来了,即逆时针为正方向,也就是说当前旋转角度的正值为向左旋转,负值为向右旋转,因此这里使用的是-=.
 
-        followAngleInVertical -= Input.GetAxis("Mouse Y") * cameraRotateSpeed;
-        
+        // if(Mathf.Abs(Input.GetAxis("Mouse Y")) >= 0.05)
+            followAngleInVertical -= Input.GetAxis("Mouse Y") * cameraRotateSpeed;
+
+        // Debug.Log("Input.GetAxis('Mouse X')"+Input.GetAxis("Mouse X"));
+        // Debug.Log("Input.GetAxis('Mouse Y')"+Input.GetAxis("Mouse Y"));
 
         if(followAngleInVertical >= maxAngleInVertical)
             followAngleInVertical = maxAngleInVertical;

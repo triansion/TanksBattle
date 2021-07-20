@@ -182,7 +182,7 @@ Camera:
   m_TargetEye: 3
   m_HDR: 1
   m_AllowMSAA: 1
-  m_AllowDynamicResolution: 0
+  m_AllowDynamicResolution: 1
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -224,7 +224,7 @@ PrefabInstance:
     - target: {fileID: 5987509579769050057, guid: 004747d159faed248a515b0cb62e04f7,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5987509579769050057, guid: 004747d159faed248a515b0cb62e04f7,
         type: 3}
@@ -296,6 +296,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5802622721764450760, guid: 901765858b0b92a4fbef1c5875dcf508,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 31.304
+      objectReference: {fileID: 0}
     - target: {fileID: 5802622722798066932, guid: 901765858b0b92a4fbef1c5875dcf508,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -350,21 +355,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5802622722798066932, guid: 901765858b0b92a4fbef1c5875dcf508,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 5802622722798066932, guid: 901765858b0b92a4fbef1c5875dcf508,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2.4
-      objectReference: {fileID: 0}
-    - target: {fileID: 5802622722798066932, guid: 901765858b0b92a4fbef1c5875dcf508,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 5802622722798066935, guid: 901765858b0b92a4fbef1c5875dcf508,
         type: 3}
