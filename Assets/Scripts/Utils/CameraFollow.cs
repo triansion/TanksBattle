@@ -15,6 +15,11 @@ public class CameraFollow : MonoBehaviour
         }
     }
     private float followAngleInVertical = 30f;
+    public float FollowAngleInVertical {
+        get {
+            return followAngleInVertical;
+        }
+    }
 
     // private float distanceInX = 0f;
     private float distanceInY = 0f;

@@ -2,6 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum CtrlType
+{
+    none = 0,
+    player,
+    AI
+}
+
+
 [System.Serializable]
 public class AxleInfo//车轴信息类:车的前后轴
 {
@@ -32,25 +40,11 @@ public class AxleInfo//车轴信息类:车的前后轴
 
 public class Tank : MonoBehaviour
 {
+    [Tooltip("当前坦克的控制类型")]
     /// <summary>
-    /// 前后方向上的输入增量
+    /// 当前坦克的控制类型
     /// </summary>
-    private float moveInputValue = 0f;
-
-    /// <summary>
-    /// 左右方向上的输入增量
-    /// </summary>
-    private float turnInputValue = 0f;
-
-    /// <summary>
-    /// 相机跟随类对象
-    /// </summary>
-    private CameraFollow cameraFollow = null;
-
-    /// <summary>
-    /// 炮塔的Transform组件对象
-    /// </summary>
-    private Transform turret = null;
+    public CtrlType ctrlType = CtrlType.player;
 
     [Tooltip("车轴信息类列表")]
     /// <summary>
@@ -108,8 +102,50 @@ public class Tank : MonoBehaviour
     /// </summary>
     public AudioClip engineDriveClip = null;
 
+    [Tooltip("坦克爆炸粒子特效预制体")]
+    /// <summary>
+    /// 坦克爆炸粒子特效预制体
+    /// </summary>
+    public ParticleSystem tankExplosionEffctPrefab = null;
+
+    [Tooltip("坦克爆炸音效")]
+    /// <summary>
+    /// 坦克爆炸音效
+    /// </summary>
+    public AudioClip tankExplosionAudioClip = null;
+
+    /// <summary>
+    /// 前后方向上的输入增量
+    /// </summary>
+    private float moveInputValue = 0f;
+
+    /// <summary>
+    /// 左右方向上的输入增量
+    /// </summary>
+    private float turnInputValue = 0f;
+
+    /// <summary>
+    /// 相机跟随类对象
+    /// </summary>
+    private CameraFollow cameraFollow = null;
+
+    /// <summary>
+    /// 炮塔的Transform组件对象
+    /// </summary>
+    private Transform turret = null;
+
+    /// <summary>
+    /// 初始音频播放速度
+    /// </summary>
     private float originPitch = 0f;
+    /// <summary>
+    /// 音频播放速度变化范围
+    /// </summary>
     private float pitchRange = 0.2f;
+
+    private float maxHp = 100f;
+    private float currentHp = 100f;
+    private bool isDead = false;
 
     void Start()
     {
@@ -165,10 +201,13 @@ public class Tank : MonoBehaviour
         //将坦克控制的代码分离到playerControl函数中
         playerControl();
         controlWheelToMove();
-        rotateTurret();
+        // rotateTurret();
         engineAudio();
     }
 
+    /// <summary>
+    /// 根据摄像机视野转向控制炮塔转向
+    /// </summary>
     private void rotateTurret()
     {
         // turret.rotation = new Quaternion(0,Camera.main.transform.rotation.y,0,turret.rotation.w);
@@ -178,6 +217,8 @@ public class Tank : MonoBehaviour
             return;
 
         turret.rotation = Quaternion.Euler(0f,-cameraFollow.FollowAngleInHorizontal,0);
+
+        turret.GetChild(0).transform.localEulerAngles = new Vector3(cameraFollow.FollowAngleInVertical - 30,0,0);
     }
     
     /// <summary>
@@ -185,6 +226,9 @@ public class Tank : MonoBehaviour
     /// </summary>
     private void playerControl()
     {
+        if(ctrlType != CtrlType.player)
+            return;
+
         moveInputValue = Input.GetAxis("Vertical");
         //当玩家按下竖直方向上的按键时设置此时相应的发动机马力,其中正值表示前进马力,负值表示后退马力
         motor = maxMotor * moveInputValue;
@@ -206,6 +250,8 @@ public class Tank : MonoBehaviour
                 brake = maxBrake;
             }
         }
+
+        rotateTurret();
     }
 
     /// <summary>
@@ -257,5 +303,33 @@ public class Tank : MonoBehaviour
                 audioSource.Play();
             }
         }
+    }
+
+    public void BeAttacked(float amount)
+    {
+        if(currentHp > 0)
+            currentHp -= amount;
+
+        if(currentHp <= 0 && !isDead)
+            onDead();
+    }
+
+    IEnumerable onDead()
+    {
+        isDead = true;
+
+        ParticleSystem explosionEffect = Instantiate<ParticleSystem>(tankExplosionEffctPrefab);
+        explosionEffect.transform.SetParent(transform);
+        explosionEffect.transform.localPosition = Vector3.zero;
+
+        explosionEffect.Play();
+
+        audioSource.clip = tankExplosionAudioClip;
+        audioSource.Play();
+
+        ctrlType = CtrlType.none;
+        
+        yield return new WaitForSeconds(tankExplosionAudioClip.length);
+        gameObject.SetActive(false);
     }
 }
