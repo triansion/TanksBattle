@@ -53,7 +53,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Game\Shell.cs" />
+     <Compile Include="Assets\Scripts\Game\ShellExplosion.cs" />
      <Compile Include="Assets\Scripts\Game\Tank.cs" />
+     <Compile Include="Assets\Scripts\Game\TankShot.cs" />
      <Compile Include="Assets\Scripts\Utils\CameraFollow.cs" />
  <Reference Include="UnityEngine.Purchasing">
  <HintPath>F:/TanksBattle/TanksBattle/Library/ScriptAssemblies/UnityEngine.Purchasing.dll</HintPath>

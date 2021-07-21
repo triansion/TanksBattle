@@ -32,8 +32,14 @@ public class AxleInfo//车轴信息类:车的前后轴
 
 public class Tank : MonoBehaviour
 {
+    /// <summary>
+    /// 前后方向上的输入增量
+    /// </summary>
     private float moveInputValue = 0f;
 
+    /// <summary>
+    /// 左右方向上的输入增量
+    /// </summary>
     private float turnInputValue = 0f;
 
     /// <summary>
@@ -173,7 +179,10 @@ public class Tank : MonoBehaviour
 
         turret.rotation = Quaternion.Euler(0f,-cameraFollow.FollowAngleInHorizontal,0);
     }
-
+    
+    /// <summary>
+    /// 玩家控制坦克前进后退以及左右转向
+    /// </summary>
     private void playerControl()
     {
         moveInputValue = Input.GetAxis("Vertical");
@@ -199,8 +208,12 @@ public class Tank : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 通过控制车轮碰撞器从而控制坦克前进后退或转向
+    /// </summary>
     private void controlWheelToMove()
     {
+        //遍历车轴信息列表,为所有的车轮碰撞器设置相关状态.主要通过设置车轮碰撞器的motorTorque、steerAngle和brakeTorque来实现对坦克移动转向的控制。其中motorTorque表示作用在该车轮上的电机力矩(马力);steerAngle表示该车轮当前的转向角度;brakeTorque表示作用在该车轮的当前的制动力矩.
         for(int i = 0;i < axleInfos.Count;i++)
         {
             if(axleInfos[i].isMotor)
@@ -218,6 +231,9 @@ public class Tank : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 播放发动机音效,坦克静止或玩家没有控制坦克时播放发动机默认音效;否则播放发动机运转音效
+    /// </summary>
     private void engineAudio()
     {
         if(audioSource == null || engineDriveClip == null || engineIdleClip == null)
