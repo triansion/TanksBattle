@@ -111,9 +111,9 @@ public class CameraFollow : MonoBehaviour
         transform.LookAt(FollowTarget);
     }
 
-    private void FixedUpdate() {
-        RayTest();
-    }
+    // private void FixedUpdate() {
+    //     RayTest();
+    // }
 
     void LateUpdate()
     {
@@ -125,25 +125,25 @@ public class CameraFollow : MonoBehaviour
         }
     }
 
-    private Ray screenRay;
-    private RaycastHit screenRaycastHit;
-    private int maxRayCastDistance = 360;
-    private void RayTest()
-    {
+    // private Ray screenRay;
+    // private RaycastHit screenRaycastHit;
+    // private int maxRayCastDistance = 360;
+    // private void RayTest()
+    // {
         
-        screenRay = Camera.main.ScreenPointToRay(new Vector3(Screen.width/2,Screen.height/2,0));
-        // screenRay = new Ray(transform.position,transform.forward);
-        // screenRay = Ray()
-        // Physics.Raycast(screenRay, maxRayCastDistance,)
-        if(Physics.Raycast(screenRay,out screenRaycastHit,maxRayCastDistance))
-        {
-            Debug.Log("碰撞体名称:"+screenRaycastHit.collider.gameObject.name);
-            // Debug.Log("碰撞点位置:"+screenRaycastHit.point);
-            Debug.DrawLine(screenRay.origin,screenRaycastHit.point,Color.red);
-        }
-        else
-        {
-            Debug.DrawLine(screenRay.origin,screenRay.GetPoint(360),Color.red);
-        }
-    }
+    //     screenRay = Camera.main.ScreenPointToRay(new Vector3(Screen.width/2,Screen.height/2,0));
+    //     // screenRay = new Ray(transform.position,transform.forward);
+    //     // screenRay = Ray()
+    //     // Physics.Raycast(screenRay, maxRayCastDistance,)
+    //     if(Physics.Raycast(screenRay,out screenRaycastHit,maxRayCastDistance))
+    //     {
+    //         Debug.Log("碰撞体名称:"+screenRaycastHit.collider.gameObject.name);
+    //         // Debug.Log("碰撞点位置:"+screenRaycastHit.point);
+    //         Debug.DrawLine(screenRay.origin,screenRaycastHit.point,Color.red);
+    //     }
+    //     else
+    //     {
+    //         Debug.DrawLine(screenRay.origin,screenRay.GetPoint(360),Color.red);
+    //     }
+    // }
 }

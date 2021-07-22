@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum CtrlType
 {
@@ -114,6 +115,9 @@ public class Tank : MonoBehaviour
     /// </summary>
     public AudioClip tankExplosionAudioClip = null;
 
+    [Tooltip("坦克生命条UI")]
+    public Slider healthSlider = null;
+
     /// <summary>
     /// 前后方向上的输入增量
     /// </summary>
@@ -164,6 +168,8 @@ public class Tank : MonoBehaviour
 
         if(turret != null)
             launchPos = turret.GetChild(0);
+        currentHp = maxHp;
+        healthSlider.value = maxHp;
     }
 
     // private float moveSpeed = 10f;
@@ -239,7 +245,9 @@ public class Tank : MonoBehaviour
         gunDir = raycastHitPos - launchPos.position;
         turretRotateAngle = Quaternion.LookRotation(turretDir);
         gunRotateAngle = Quaternion.LookRotation(gunDir);
-        turret.rotation = turretRotateAngle;
+        // Debug.Log("turretRotateAngle: "+turretRotateAngle.eulerAngles);
+        // Debug.Log("gunRotateAngle: "+gunRotateAngle.eulerAngles);
+        turret.rotation = Quaternion.Euler(0,turretRotateAngle.eulerAngles.y,0);
         launchPos.rotation = gunRotateAngle;
     }
     
@@ -330,10 +338,16 @@ public class Tank : MonoBehaviour
     public void BeAttacked(float amount)
     {
         if(currentHp > 0)
+        {
             currentHp -= amount;
+            healthSlider.value = currentHp;
+        }
 
         if(currentHp <= 0 && !isDead)
+        {
+            healthSlider.value = 0;
             OnDead();
+        }
     }
 
     private void OnDead()
@@ -369,12 +383,12 @@ public class Tank : MonoBehaviour
         {
             // Debug.Log("碰撞体名称:"+screenRaycastHit.collider.gameObject.name);
             // Debug.Log("碰撞点位置:"+screenRaycastHit.point);
-            Debug.DrawLine(screenRay.origin,screenRaycastHit.point,Color.red);
+            // Debug.DrawLine(screenRay.origin,screenRaycastHit.point,Color.red);
             raycastHitPos = screenRaycastHit.point;
         }
         else
         {
-            Debug.DrawLine(screenRay.origin,screenRay.GetPoint(maxRayCastDistance),Color.red);
+            // Debug.DrawLine(screenRay.origin,screenRay.GetPoint(maxRayCastDistance),Color.red);
             raycastHitPos = screenRay.GetPoint(maxRayCastDistance);
         }
     }
