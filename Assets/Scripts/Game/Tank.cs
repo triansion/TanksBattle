@@ -147,13 +147,23 @@ public class Tank : MonoBehaviour
     private float currentHp = 100f;
     private bool isDead = false;
 
+    private ParticleSystem explosionEffect = null;
+
     void Start()
     {
         turret = transform.Find("TankRenderers/TankTurret");
+
         cameraFollow = Camera.main.transform.GetComponent<CameraFollow>();
         // audioSource = transform.GetComponent<AudioSource>();
         if(audioSource != null)
             originPitch = audioSource.pitch;
+
+        explosionEffect = Instantiate<ParticleSystem>(tankExplosionEffctPrefab);
+        explosionEffect.transform.SetParent(transform);
+        explosionEffect.gameObject.SetActive(false);
+
+        if(turret != null)
+            launchPos = turret.GetChild(0);
     }
 
     // private float moveSpeed = 10f;
@@ -199,16 +209,21 @@ public class Tank : MonoBehaviour
 
     void FixedUpdate() {
         //将坦克控制的代码分离到playerControl函数中
-        playerControl();
-        controlWheelToMove();
-        // rotateTurret();
-        engineAudio();
+        PlayerControl();
+        ControlWheelToMove();
+        EngineAudio();
     }
+
+    private Vector3 turretDir;
+    private Vector3 gunDir;
+    private Transform launchPos;
+    private Quaternion turretRotateAngle;
+    private Quaternion gunRotateAngle;
 
     /// <summary>
     /// 根据摄像机视野转向控制炮塔转向
     /// </summary>
-    private void rotateTurret()
+    private void RotateTurret()
     {
         // turret.rotation = new Quaternion(0,Camera.main.transform.rotation.y,0,turret.rotation.w);
         //由于使用Quaternion.Euler设置当前物体的旋转时,参数为正数时表示逆着旋转轴的正方向看过去顺时针方向为正方向,因此要将从cameraFollow中获取到的旋转角度取相反数才能正确旋转炮塔
@@ -216,15 +231,22 @@ public class Tank : MonoBehaviour
         if(turret == null)
             return;
 
-        turret.rotation = Quaternion.Euler(0f,-cameraFollow.FollowAngleInHorizontal,0);
+        // turret.rotation = Quaternion.Euler(0f,-cameraFollow.FollowAngleInHorizontal,0);
 
-        turret.GetChild(0).transform.localEulerAngles = new Vector3(cameraFollow.FollowAngleInVertical - 30,0,0);
+        // turret.GetChild(0).transform.localEulerAngles = new Vector3(cameraFollow.FollowAngleInVertical,0,0);
+
+        turretDir = raycastHitPos - turret.transform.position;
+        gunDir = raycastHitPos - launchPos.position;
+        turretRotateAngle = Quaternion.LookRotation(turretDir);
+        gunRotateAngle = Quaternion.LookRotation(gunDir);
+        turret.rotation = turretRotateAngle;
+        launchPos.rotation = gunRotateAngle;
     }
     
     /// <summary>
     /// 玩家控制坦克前进后退以及左右转向
     /// </summary>
-    private void playerControl()
+    private void PlayerControl()
     {
         if(ctrlType != CtrlType.player)
             return;
@@ -250,14 +272,14 @@ public class Tank : MonoBehaviour
                 brake = maxBrake;
             }
         }
-
-        rotateTurret();
+        CalculateTargetSignPos();
+        RotateTurret();
     }
 
     /// <summary>
     /// 通过控制车轮碰撞器从而控制坦克前进后退或转向
     /// </summary>
-    private void controlWheelToMove()
+    private void ControlWheelToMove()
     {
         //遍历车轴信息列表,为所有的车轮碰撞器设置相关状态.主要通过设置车轮碰撞器的motorTorque、steerAngle和brakeTorque来实现对坦克移动转向的控制。其中motorTorque表示作用在该车轮上的电机力矩(马力);steerAngle表示该车轮当前的转向角度;brakeTorque表示作用在该车轮的当前的制动力矩.
         for(int i = 0;i < axleInfos.Count;i++)
@@ -280,7 +302,7 @@ public class Tank : MonoBehaviour
     /// <summary>
     /// 播放发动机音效,坦克静止或玩家没有控制坦克时播放发动机默认音效;否则播放发动机运转音效
     /// </summary>
-    private void engineAudio()
+    private void EngineAudio()
     {
         if(audioSource == null || engineDriveClip == null || engineIdleClip == null)
             return;
@@ -311,16 +333,19 @@ public class Tank : MonoBehaviour
             currentHp -= amount;
 
         if(currentHp <= 0 && !isDead)
-            onDead();
+            OnDead();
     }
 
-    IEnumerable onDead()
+    private void OnDead()
     {
         isDead = true;
 
-        ParticleSystem explosionEffect = Instantiate<ParticleSystem>(tankExplosionEffctPrefab);
-        explosionEffect.transform.SetParent(transform);
-        explosionEffect.transform.localPosition = Vector3.zero;
+        // ParticleSystem explosionEffect = Instantiate<ParticleSystem>(tankExplosionEffctPrefab);
+        // explosionEffect.transform.SetParent(transform);
+        // explosionEffect.transform.SetParent(null);
+        explosionEffect.transform.position = transform.position;
+        explosionEffect.gameObject.SetActive(true);
+        // Destroy(explosionEffect,explosionEffect.main.duration);
 
         explosionEffect.Play();
 
@@ -329,7 +354,28 @@ public class Tank : MonoBehaviour
 
         ctrlType = CtrlType.none;
         
-        yield return new WaitForSeconds(tankExplosionAudioClip.length);
-        gameObject.SetActive(false);
+        // yield return new WaitForSeconds(tankExplosionAudioClip.length);
+        // gameObject.SetActive(false);
+    }
+
+    private Ray screenRay;
+    private RaycastHit screenRaycastHit;
+    private int maxRayCastDistance = 400;
+    private Vector3 raycastHitPos;
+    private void CalculateTargetSignPos()
+    {
+        screenRay = Camera.main.ScreenPointToRay(new Vector3(Screen.width/2,Screen.height/2,0));
+        if(Physics.Raycast(screenRay,out screenRaycastHit,maxRayCastDistance))
+        {
+            // Debug.Log("碰撞体名称:"+screenRaycastHit.collider.gameObject.name);
+            // Debug.Log("碰撞点位置:"+screenRaycastHit.point);
+            Debug.DrawLine(screenRay.origin,screenRaycastHit.point,Color.red);
+            raycastHitPos = screenRaycastHit.point;
+        }
+        else
+        {
+            Debug.DrawLine(screenRay.origin,screenRay.GetPoint(maxRayCastDistance),Color.red);
+            raycastHitPos = screenRay.GetPoint(maxRayCastDistance);
+        }
     }
 }

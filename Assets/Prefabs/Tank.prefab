@@ -466,12 +466,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4399634958798456046}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.86, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5987509579769050057}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4981369164912106360
 GameObject:
@@ -5342,7 +5342,7 @@ GameObject:
   - component: {fileID: 5447203056631695308}
   - component: {fileID: 411317297059338698}
   - component: {fileID: 8064191860500761372}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Tank
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -5363,8 +5363,8 @@ Transform:
   - {fileID: 5987509579769050061}
   - {fileID: 1422147506717156296}
   - {fileID: 129368130146607050}
-  - {fileID: 593826693253223133}
   - {fileID: 5117080279990095528}
+  - {fileID: 593826693253223133}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5396,8 +5396,10 @@ MonoBehaviour:
   audioSource: {fileID: 8064191860500761372}
   engineIdleClip: {fileID: 8300000, guid: 59e6e7f80fec423499e06f632c207cad, type: 3}
   engineDriveClip: {fileID: 8300000, guid: e0b3bf8f164e5da42afba798092fc360, type: 3}
-  tankExplosionEffctPrefab: {fileID: 0}
-  tankExplosionAudioClip: {fileID: 0}
+  tankExplosionEffctPrefab: {fileID: 7155501462236946984, guid: 43398ceb11e7c7e42bbddae0deae6958,
+    type: 3}
+  tankExplosionAudioClip: {fileID: 8300000, guid: d50375f0147970c41927357abf02006a,
+    type: 3}
 --- !u!114 &6769650903405208029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5987,7 +5989,7 @@ Transform:
   - {fileID: 1567546191374449880}
   - {fileID: 3838797242490454885}
   m_Father: {fileID: 5987509579769050057}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9029806430605634376
 GameObject:

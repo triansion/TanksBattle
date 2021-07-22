@@ -84,6 +84,8 @@ public class TankShot : MonoBehaviour
     /// </summary>
     private float lastShotTime = 0f;
 
+    private CtrlType ctrlType = CtrlType.player;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -93,6 +95,8 @@ public class TankShot : MonoBehaviour
         chargeSlider.minValue = minLaunchForce;
         chargeSlider.maxValue = maxLaunchForce;
         chargeSlider.value = minLaunchForce;
+
+        ctrlType = transform.GetComponent<Tank>().ctrlType;
     }
 
     // Update is called once per frame
@@ -106,6 +110,9 @@ public class TankShot : MonoBehaviour
     /// </summary>
     private void shot()
     {
+        if(ctrlType != CtrlType.player)
+            return;
+
         //若最近一次发射的时间距离当前时间小于发射间隔则不会往下处理
         if(Time.time - lastShotTime < shotInterval)
             return;

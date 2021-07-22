@@ -5,8 +5,8 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     public Transform FollowTarget = null;
-    [Range(5f,15f)]
-    private float followInterVal = 15f;
+    [Range(5f,10f)]
+    private float followInterval = 7f;
 
     private float followAngleInHorizontal = 0f;
     public float FollowAngleInHorizontal {
@@ -26,23 +26,45 @@ public class CameraFollow : MonoBehaviour
     private float distanceInZ = 0f;
 
     private float cameraRotateSpeed = 20f;
-    private float maxAngleInVertical = 60f;
-    private float minAngleInVertical = 0;
+    private float maxAngleInVertical = 30f;
+    private float minAngleInVertical = -30;
 
-    private float cameraZoomSpeed = 5f;
-    private float maxFollowInterval = 25f;
+    private float cameraZoomSpeed = 1f;
+    private float maxFollowInterval = 10f;
     private float minFollowInterval = 5f;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        if(FollowTarget != null)
+        GameObject playerTank = GameObject.Find("Tank");
+        if(playerTank != null)
         {
-            if(FollowTarget.Find("Camerapoint") != null)
-                this.FollowTarget = FollowTarget.Find("Camerapoint");
-            distanceInY = followInterVal * Mathf.Sin((Mathf.PI/180)*followAngleInVertical);
-            distanceInZ = followInterVal * Mathf.Cos((Mathf.PI/180)*followAngleInVertical);
+            SetTarget(playerTank);
+            distanceInY = followInterval * Mathf.Sin((Mathf.PI/180)*followAngleInVertical);
+            distanceInZ = followInterval * Mathf.Cos((Mathf.PI/180)*followAngleInVertical);
             followToTarget();
+        }
+        // if(FollowTarget != null)
+        // {
+        //     if(FollowTarget.Find("TankRenderers/TankTurret/Camerapoint") != null)
+        //         this.FollowTarget = FollowTarget.Find("TankRenderers/TankTurret/Camerapoint");
+        //     distanceInY = followInterVal * Mathf.Sin((Mathf.PI/180)*followAngleInVertical);
+        //     distanceInZ = followInterVal * Mathf.Cos((Mathf.PI/180)*followAngleInVertical);
+        //     followToTarget();
+        // }
+        
+    }
+
+    private void SetTarget(GameObject target)
+    {
+        if(target.transform.Find("Camerapoint") != null)
+        {
+            this.FollowTarget = target.transform.Find("Camerapoint");
+        }
+        else
+        {
+            this.FollowTarget = target.transform;
         }
     }
 
@@ -62,22 +84,23 @@ public class CameraFollow : MonoBehaviour
         else if(followAngleInVertical <= minAngleInVertical)
             followAngleInVertical = minAngleInVertical;
 
-        distanceInY = followInterVal * Mathf.Sin((Mathf.PI/180)*followAngleInVertical);
-        distanceInZ = followInterVal * Mathf.Cos((Mathf.PI/180)*followAngleInVertical);
+        distanceInY = followInterval * Mathf.Sin((Mathf.PI/180)*followAngleInVertical);
+        distanceInZ = followInterval * Mathf.Cos((Mathf.PI/180)*followAngleInVertical);
     }
 
     private void cameraZoom()
     {
-        this.followInterVal += Input.GetAxis("Mouse ScrollWheel") * cameraZoomSpeed;
+        // if(this.followInterval >= minFollowInterval && this.followInterval <=maxFollowInterval)
+            // this.followInterval += Input.GetAxis("Mouse ScrollWheel") * cameraZoomSpeed;
         if(Input.GetAxis("Mouse ScrollWheel") > 0)//往上滚动
         {
-            if(this.followInterVal > maxFollowInterval)
-                this.followInterVal = maxFollowInterval;
+            if(this.followInterval < maxFollowInterval)
+                this.followInterval += cameraZoomSpeed;
         }
         else if(Input.GetAxis("Mouse ScrollWheel") < 0)//往下滚动
         {
-            if(this.followInterVal < minFollowInterval)
-                this.followInterVal = minFollowInterval;
+            if(this.followInterval > minFollowInterval)
+                this.followInterval -= cameraZoomSpeed;
         }
     }
 
@@ -88,6 +111,10 @@ public class CameraFollow : MonoBehaviour
         transform.LookAt(FollowTarget);
     }
 
+    private void FixedUpdate() {
+        RayTest();
+    }
+
     void LateUpdate()
     {
         if(FollowTarget != null)
@@ -95,6 +122,28 @@ public class CameraFollow : MonoBehaviour
             cameraRotate();
             followToTarget();
             cameraZoom();
+        }
+    }
+
+    private Ray screenRay;
+    private RaycastHit screenRaycastHit;
+    private int maxRayCastDistance = 360;
+    private void RayTest()
+    {
+        
+        screenRay = Camera.main.ScreenPointToRay(new Vector3(Screen.width/2,Screen.height/2,0));
+        // screenRay = new Ray(transform.position,transform.forward);
+        // screenRay = Ray()
+        // Physics.Raycast(screenRay, maxRayCastDistance,)
+        if(Physics.Raycast(screenRay,out screenRaycastHit,maxRayCastDistance))
+        {
+            Debug.Log("碰撞体名称:"+screenRaycastHit.collider.gameObject.name);
+            // Debug.Log("碰撞点位置:"+screenRaycastHit.point);
+            Debug.DrawLine(screenRay.origin,screenRaycastHit.point,Color.red);
+        }
+        else
+        {
+            Debug.DrawLine(screenRay.origin,screenRay.GetPoint(360),Color.red);
         }
     }
 }
