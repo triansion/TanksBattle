@@ -34,6 +34,8 @@ public class ShellExplosion : MonoBehaviour
 
     public float explosionForce = 1000f;
 
+    public int launcherID = -1;
+
 
     // Start is called before the first frame update
     void Start()
@@ -57,7 +59,7 @@ public class ShellExplosion : MonoBehaviour
         {
             Rigidbody targetRigidbody = colliders[i].GetComponent<Rigidbody>();
 
-            if(targetRigidbody == null)
+            if(targetRigidbody == null || colliders[i].transform.tag == "Player")
                 continue;
 
             targetRigidbody.AddExplosionForce(explosionForce,transform.position,explosionRadius);

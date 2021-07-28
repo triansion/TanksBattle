@@ -5290,7 +5290,7 @@ GameObject:
   - component: {fileID: 6093080885563721673}
   - component: {fileID: 5493896900229171290}
   - component: {fileID: 5849180249223995985}
-  m_Layer: 5
+  m_Layer: 0
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5314,8 +5314,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0.5}
-  m_SizeDelta: {x: 4, y: 4}
+  m_AnchoredPosition: {x: 0, y: 0.2}
+  m_SizeDelta: {x: 3.5, y: 3.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &6093080885563721673
 Canvas:
@@ -5609,6 +5609,7 @@ MonoBehaviour:
   tankExplosionAudioClip: {fileID: 8300000, guid: d50375f0147970c41927357abf02006a,
     type: 3}
   healthSlider: {fileID: 2520078561375181218}
+  enemyKilledIcon: {fileID: 2800000, guid: 41c6f94d80f9e034a9c63dcf97d30f5c, type: 3}
 --- !u!114 &6769650903405208029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5628,9 +5629,10 @@ MonoBehaviour:
   chargingClip: {fileID: 8300000, guid: be04adb080378b44f9e3c70795bf7c60, type: 3}
   launchPos: {fileID: 3511556595524936322}
   minLaunchForce: 40
-  maxLaunchForce: 60
+  maxLaunchForce: 80
   maxChargeTime: 0.75
   chargeSlider: {fileID: 190340253867156354}
+  launcherID: 0
 --- !u!65 &5447203056631695308
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6343,7 +6345,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.3137255}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

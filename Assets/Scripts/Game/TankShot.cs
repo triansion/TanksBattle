@@ -85,6 +85,7 @@ public class TankShot : MonoBehaviour
     private float lastShotTime = 0f;
 
     private CtrlType ctrlType = CtrlType.player;
+    public int launcherID = -1;
 
     // Start is called before the first frame update
     void Start()
@@ -161,6 +162,8 @@ public class TankShot : MonoBehaviour
 
         //为该炮弹设置一个初速度,该初始速度的大小由当前的发射作用力大小决定,方向由发射位置的前向方向决定(即炮管方向)
         shellInstance.velocity = currentLaunchForce * launchPos.forward;
+
+        shellInstance.GetComponent<ShellExplosion>().launcherID = launcherID;
 
         //播放发射炮弹音效
         shotAudioSource.clip = fireClip;

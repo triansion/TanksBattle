@@ -118,6 +118,9 @@ public class Tank : MonoBehaviour
     [Tooltip("坦克生命条UI")]
     public Slider healthSlider = null;
 
+    [Tooltip("UI层级中的敌人击杀图标")]
+    public Texture2D enemyKilledIcon;
+
     /// <summary>
     /// 前后方向上的输入增量
     /// </summary>
@@ -153,6 +156,8 @@ public class Tank : MonoBehaviour
 
     private ParticleSystem explosionEffect = null;
 
+    private float killUIIconStartDrwaTime = -1;
+
     void Start()
     {
         turret = transform.Find("TankRenderers/TankTurret");
@@ -170,6 +175,9 @@ public class Tank : MonoBehaviour
             launchPos = turret.GetChild(0);
         currentHp = maxHp;
         healthSlider.value = maxHp;
+
+        // if(enemyKilledIcon != null)
+        //     enemyKilledIcon
     }
 
     // private float moveSpeed = 10f;
@@ -346,8 +354,24 @@ public class Tank : MonoBehaviour
         if(currentHp <= 0 && !isDead)
         {
             healthSlider.value = 0;
+            StartDrawKillIcon();
             OnDead();
         }
+    }
+
+    public void StartDrawKillIcon()
+    {
+        killUIIconStartDrwaTime = Time.time;
+    }
+
+    private void DrawKillIcon()
+    {
+        if(enemyKilledIcon != null && Time.time - killUIIconStartDrwaTime < 1)
+        {
+            Rect rect = new Rect((Screen.width - enemyKilledIcon.width)/2,70,enemyKilledIcon.width,enemyKilledIcon.height);
+            GUI.DrawTexture(rect,enemyKilledIcon);
+        }
+
     }
 
     private void OnDead()
@@ -391,5 +415,10 @@ public class Tank : MonoBehaviour
             // Debug.DrawLine(screenRay.origin,screenRay.GetPoint(maxRayCastDistance),Color.red);
             raycastHitPos = screenRay.GetPoint(maxRayCastDistance);
         }
+    }
+
+    void OnGUI()
+    {
+        DrawKillIcon();
     }
 }
