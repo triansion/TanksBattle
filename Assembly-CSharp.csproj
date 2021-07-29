@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Game\EnemyAI.cs" />
      <Compile Include="Assets\Scripts\Game\Shell.cs" />
      <Compile Include="Assets\Scripts\Game\ShellExplosion.cs" />
      <Compile Include="Assets\Scripts\Game\Tank.cs" />

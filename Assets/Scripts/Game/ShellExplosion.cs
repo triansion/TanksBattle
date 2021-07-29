@@ -34,7 +34,8 @@ public class ShellExplosion : MonoBehaviour
 
     public float explosionForce = 1000f;
 
-    public int launcherID = -1;
+    // public int launcherID = -1;
+    public GameObject launcher;
 
 
     // Start is called before the first frame update
@@ -50,7 +51,9 @@ public class ShellExplosion : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
-        if(other.transform.tag == "Player")
+        // if(other.transform.tag == "Player")
+        //     return;
+        if(other.gameObject == launcher)
             return;
 
         Collider[] colliders = Physics.OverlapSphere(transform.position,explosionRadius,targetLayerMask);
@@ -59,7 +62,7 @@ public class ShellExplosion : MonoBehaviour
         {
             Rigidbody targetRigidbody = colliders[i].GetComponent<Rigidbody>();
 
-            if(targetRigidbody == null || colliders[i].transform.tag == "Player")
+            if(targetRigidbody == null)
                 continue;
 
             targetRigidbody.AddExplosionForce(explosionForce,transform.position,explosionRadius);
@@ -69,7 +72,7 @@ public class ShellExplosion : MonoBehaviour
                 continue;
 
             float damage = CalculateDamage(targetRigidbody.transform.position);
-            targetTank.BeAttacked(damage);
+            targetTank.BeAttacked(damage,launcher);
         }
 
         explosionEffect.transform.parent = null;

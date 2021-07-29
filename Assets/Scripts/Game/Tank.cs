@@ -152,11 +152,18 @@ public class Tank : MonoBehaviour
 
     private float maxHp = 100f;
     private float currentHp = 100f;
+    public float CurrentHp{
+        get{
+            return currentHp;
+        }
+    }
     private bool isDead = false;
 
     private ParticleSystem explosionEffect = null;
 
     private float killUIIconStartDrwaTime = -1;
+
+    private EnemyAI enemyAI;
 
     void Start()
     {
@@ -178,6 +185,13 @@ public class Tank : MonoBehaviour
 
         // if(enemyKilledIcon != null)
         //     enemyKilledIcon
+
+        if(ctrlType == CtrlType.AI)
+        {
+            enemyAI = gameObject.AddComponent<EnemyAI>();
+            enemyAI.AI_Status = EnemyAI.Status.Patrol;
+            enemyAI.aiTank = this;
+        }
     }
 
     // private float moveSpeed = 10f;
@@ -224,6 +238,8 @@ public class Tank : MonoBehaviour
     void FixedUpdate() {
         //将坦克控制的代码分离到playerControl函数中
         PlayerControl();
+        AIControl();
+        NoneControl();
         ControlWheelToMove();
         EngineAudio();
     }
@@ -231,8 +247,8 @@ public class Tank : MonoBehaviour
     private Vector3 turretDir;
     private Vector3 gunDir;
     private Transform launchPos;
-    private Quaternion turretRotateAngle;
-    private Quaternion gunRotateAngle;
+    private Quaternion turretRotateAngle = Quaternion.Euler(0,0,0);
+    private Quaternion gunRotateAngle = Quaternion.Euler(0,0,0);
 
     /// <summary>
     /// 根据摄像机视野转向控制炮塔转向
@@ -249,16 +265,18 @@ public class Tank : MonoBehaviour
 
         // turret.GetChild(0).transform.localEulerAngles = new Vector3(cameraFollow.FollowAngleInVertical,0,0);
 
-        turretDir = raycastHitPos - turret.transform.position;
-        gunDir = raycastHitPos - launchPos.position;
-        turretRotateAngle = Quaternion.LookRotation(turretDir);
-        gunRotateAngle = Quaternion.LookRotation(gunDir);
+        // turretDir = raycastHitPos - turret.transform.position;
+        // gunDir = raycastHitPos - launchPos.position;
+        // turretRotateAngle = Quaternion.LookRotation(turretDir);
+        // gunRotateAngle = Quaternion.LookRotation(gunDir);
         // Debug.Log("turretRotateAngle: "+turretRotateAngle.eulerAngles);
         // Debug.Log("gunRotateAngle: "+gunRotateAngle.eulerAngles);
         turret.rotation = Quaternion.Euler(0,turretRotateAngle.eulerAngles.y,0);
         launchPos.rotation = gunRotateAngle;
     }
     
+    #region 玩家操控坦克逻辑
+
     /// <summary>
     /// 玩家控制坦克前进后退以及左右转向
     /// </summary>
@@ -289,8 +307,79 @@ public class Tank : MonoBehaviour
             }
         }
         CalculateTargetSignPos();
+
+        CalculateTurretRotate();
+
         RotateTurret();
     }
+
+    private Ray screenRay;
+    private RaycastHit screenRaycastHit;
+    private int maxRayCastDistance = 400;
+    private Vector3 raycastHitPos;
+    private void CalculateTargetSignPos()
+    {
+        screenRay = Camera.main.ScreenPointToRay(new Vector3(Screen.width/2,Screen.height/2,0));
+        if(Physics.Raycast(screenRay,out screenRaycastHit,maxRayCastDistance))
+        {
+            // Debug.Log("碰撞体名称:"+screenRaycastHit.collider.gameObject.name);
+            // Debug.Log("碰撞点位置:"+screenRaycastHit.point);
+            // Debug.DrawLine(screenRay.origin,screenRaycastHit.point,Color.red);
+            raycastHitPos = screenRaycastHit.point;
+        }
+        else
+        {
+            // Debug.DrawLine(screenRay.origin,screenRay.GetPoint(maxRayCastDistance),Color.red);
+            raycastHitPos = screenRay.GetPoint(maxRayCastDistance);
+        }
+    }
+
+    private void CalculateTurretRotate()
+    {
+        if(turret == null)
+            return;
+
+        turretDir = raycastHitPos - turret.transform.position;
+        gunDir = raycastHitPos - launchPos.position;
+        turretRotateAngle = Quaternion.LookRotation(turretDir);
+        gunRotateAngle = Quaternion.LookRotation(gunDir);
+        // Debug.Log("玩家炮塔旋转角度:"+turretRotateAngle.eulerAngles);
+        // Debug.Log("玩家炮管旋转角度:"+gunRotateAngle.eulerAngles);
+    }
+
+    #endregion
+
+    #region AI操控坦克逻辑
+
+    private void AIControl()
+    {
+        if(ctrlType != CtrlType.AI)
+            return;
+
+        //控制坦克移动(TODO)
+
+
+        //控制炮塔炮管转动
+        enemyAI.CalculateTurretRotate( out turretRotateAngle,out gunRotateAngle);
+
+        RotateTurret();
+    }
+
+    #endregion
+
+    #region 坦克死亡后无人控制
+
+    private void NoneControl()
+    {
+        if(ctrlType != CtrlType.none)
+            return;
+
+        motor = 0;
+        steeringAngle = 0;
+        brake = maxBrake / 2;
+    }
+
+    #endregion
 
     /// <summary>
     /// 通过控制车轮碰撞器从而控制坦克前进后退或转向
@@ -314,6 +403,9 @@ public class Tank : MonoBehaviour
             axleInfos[i].rightWheel.brakeTorque = brake;
         }
     }
+
+
+
 
     /// <summary>
     /// 播放发动机音效,坦克静止或玩家没有控制坦克时播放发动机默认音效;否则播放发动机运转音效
@@ -343,12 +435,18 @@ public class Tank : MonoBehaviour
         }
     }
 
-    public void BeAttacked(float amount)
+    public void BeAttacked(float amount,GameObject attacker)
     {
         if(currentHp > 0)
         {
             currentHp -= amount;
             healthSlider.value = currentHp;
+
+            //AI处理
+            if(enemyAI != null)
+            {
+                enemyAI.OnBeAttacked(attacker);
+            }
         }
 
         if(currentHp <= 0 && !isDead)
@@ -392,29 +490,9 @@ public class Tank : MonoBehaviour
 
         ctrlType = CtrlType.none;
         
+        transform.GetComponent<TankShot>().DisableShot();
         // yield return new WaitForSeconds(tankExplosionAudioClip.length);
         // gameObject.SetActive(false);
-    }
-
-    private Ray screenRay;
-    private RaycastHit screenRaycastHit;
-    private int maxRayCastDistance = 400;
-    private Vector3 raycastHitPos;
-    private void CalculateTargetSignPos()
-    {
-        screenRay = Camera.main.ScreenPointToRay(new Vector3(Screen.width/2,Screen.height/2,0));
-        if(Physics.Raycast(screenRay,out screenRaycastHit,maxRayCastDistance))
-        {
-            // Debug.Log("碰撞体名称:"+screenRaycastHit.collider.gameObject.name);
-            // Debug.Log("碰撞点位置:"+screenRaycastHit.point);
-            // Debug.DrawLine(screenRay.origin,screenRaycastHit.point,Color.red);
-            raycastHitPos = screenRaycastHit.point;
-        }
-        else
-        {
-            // Debug.DrawLine(screenRay.origin,screenRay.GetPoint(maxRayCastDistance),Color.red);
-            raycastHitPos = screenRay.GetPoint(maxRayCastDistance);
-        }
     }
 
     void OnGUI()
