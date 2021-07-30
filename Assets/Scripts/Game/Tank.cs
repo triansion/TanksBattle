@@ -486,6 +486,7 @@ public class Tank : MonoBehaviour
 
         audioSource.clip = tankExplosionAudioClip;
         audioSource.Play();
+        audioSource.loop = false;
 
         ctrlType = CtrlType.none;
         
