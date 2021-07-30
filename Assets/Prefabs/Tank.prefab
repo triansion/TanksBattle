@@ -5632,7 +5632,6 @@ MonoBehaviour:
   maxLaunchForce: 80
   maxChargeTime: 0.75
   chargeSlider: {fileID: 190340253867156354}
-  launcherID: 0
 --- !u!65 &5447203056631695308
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -233,7 +233,23 @@ public class EnemyAI : MonoBehaviour
     private void InitAIWayPoints()
     {
         Transform wayPointsParent = GameObject.Find("WayPointsParent").transform;
-        aIPath.GenerateWayPoints(wayPointsParent,true);
+
+        // aIPath.GenerateWayPoints(wayPointsParent,true);
+
+        // Transform wayPoint = wayPointsParent.GetChild(0);
+        int wayPointCount = wayPointsParent.childCount;
+        if(wayPointCount > 0)
+        {
+            Transform wayPoint;
+            for(int i = 0; i < wayPointCount; i++)
+            {
+                wayPoint = wayPointsParent.GetChild(i);
+                if(i == 0)
+                    aIPath.GenerateWayPointsByNavMesh(transform,wayPoint,true,true);
+                else
+                    aIPath.GenerateWayPointsByNavMesh(wayPointsParent.GetChild(i-1),wayPoint,true,false);
+            }
+        }
     }
     
     private void QueryWayPoint()
@@ -266,9 +282,9 @@ public class EnemyAI : MonoBehaviour
 
         CalculateAITankToWayPointDir();
 
-        if(aiTankToWayPointDirInLocal.x > aIPath.deviation)
+        if(aiTankToWayPointDirInLocal.x > 1)
             return aiTank.maxSteeringAngle;
-        else if(aiTankToWayPointDirInLocal.x < -aIPath.deviation)
+        else if(aiTankToWayPointDirInLocal.x < -1)
             return -aiTank.maxSteeringAngle;
         else
             return 0;
@@ -280,7 +296,7 @@ public class EnemyAI : MonoBehaviour
             return 0;
         
         CalculateAITankToWayPointDir();
-        if(aiTankToWayPointDirInLocal.z > 0)
+        if(aiTankToWayPointDirInLocal.z >= 0)
             return aiTank.maxMotor;
         else
             return -aiTank.maxMotor;
@@ -295,6 +311,11 @@ public class EnemyAI : MonoBehaviour
             return aiTank.maxBrake;
         else
             return 0;
+    }
+
+    void OnDrawGizmos() {
+        if(aIPath != null)
+            aIPath.DrawWayPoints();
     }
 
     #endregion
