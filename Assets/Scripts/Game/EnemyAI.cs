@@ -44,12 +44,20 @@ public class EnemyAI : MonoBehaviour
     private Transform turret;
     private Transform launchPos;
 
+    private AIPath aIPath;
+
     void Start()
     {
         turret = transform.Find("TankRenderers/TankTurret");
         launchPos = turret.GetChild(0);
         tankCenterPos = new Vector3(0,transform.localScale.y,0);
+        aIPath = new AIPath();
+
+        InitAIWayPoints();
+
+        InitaiTankToWayPointDir();
     }
+
 
     private void PatrolStart()
     {
@@ -100,7 +108,15 @@ public class EnemyAI : MonoBehaviour
     }
 
     void FixedUpdate() {
+
         SearchPlayerTank();
+
+        QueryWayPoint();
+    }
+
+    public bool IsTakeTarget()
+    {
+        return target != null;
     }
 
     #region 主动搜索目标逻辑
@@ -182,8 +198,8 @@ public class EnemyAI : MonoBehaviour
     {
         if(target == null)
         {
-            turretRotateAngle = Quaternion.Euler(0,0,0);
-            gunRotateAngle = Quaternion.Euler(0,0,0);
+            turretRotateAngle = Quaternion.Euler(aiTank.transform.forward);
+            gunRotateAngle = Quaternion.Euler(aiTank.transform.forward);
         }
         else
         {
@@ -208,6 +224,77 @@ public class EnemyAI : MonoBehaviour
         {
             return true;
         }
+    }
+
+    #endregion
+
+    #region AI寻路逻辑
+    
+    private void InitAIWayPoints()
+    {
+        Transform wayPointsParent = GameObject.Find("WayPointsParent").transform;
+        aIPath.GenerateWayPoints(wayPointsParent,true);
+    }
+    
+    private void QueryWayPoint()
+    {
+        if(aIPath.IsReachWayPoint(transform))
+        {
+            aIPath.NextWayPoint();
+        }
+    }
+
+    private void InitaiTankToWayPointDir()
+    {
+        aiTankToWayPointDirInWold = new Vector3(0,0,0);
+        aiTankToWayPointDirInLocal = new Vector3(0,0,0);
+    }
+
+    private Vector3 aiTankToWayPointDirInWold = new Vector3(0,0,0);
+    private Vector3 aiTankToWayPointDirInLocal = new Vector3(0,0,0);
+
+    private void CalculateAITankToWayPointDir()
+    {
+        aiTankToWayPointDirInWold = aIPath.currentWayPoint - transform.position;
+        aiTankToWayPointDirInLocal = transform.InverseTransformDirection(aiTankToWayPointDirInWold);
+    }
+
+    public float GetSteering()
+    {
+        if(aiTank == null || aIPath == null)
+            return 0;
+
+        CalculateAITankToWayPointDir();
+
+        if(aiTankToWayPointDirInLocal.x > aIPath.deviation)
+            return aiTank.maxSteeringAngle;
+        else if(aiTankToWayPointDirInLocal.x < -aIPath.deviation)
+            return -aiTank.maxSteeringAngle;
+        else
+            return 0;
+    }
+
+    public float GetMotor()
+    {
+        if(aiTank == null || aIPath == null)
+            return 0;
+        
+        CalculateAITankToWayPointDir();
+        if(aiTankToWayPointDirInLocal.z > 0)
+            return aiTank.maxMotor;
+        else
+            return -aiTank.maxMotor;
+    }
+
+    public float GetBrake()
+    {
+        if(aiTank == null || aIPath == null)
+            return 0;
+
+        if(aIPath.isFinish)
+            return aiTank.maxBrake;
+        else
+            return 0;
     }
 
     #endregion

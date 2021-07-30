@@ -155,6 +155,7 @@ public class TankShot : MonoBehaviour
                 chargeSlider.value = currentLaunchForce;
             }
         }
+        //AI控制敌人发射炮弹
         else if(ctrlType == CtrlType.AI)
         {
             if(enemyAI.IsShouldShot())

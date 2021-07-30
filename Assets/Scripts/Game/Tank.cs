@@ -265,12 +265,6 @@ public class Tank : MonoBehaviour
 
         // turret.GetChild(0).transform.localEulerAngles = new Vector3(cameraFollow.FollowAngleInVertical,0,0);
 
-        // turretDir = raycastHitPos - turret.transform.position;
-        // gunDir = raycastHitPos - launchPos.position;
-        // turretRotateAngle = Quaternion.LookRotation(turretDir);
-        // gunRotateAngle = Quaternion.LookRotation(gunDir);
-        // Debug.Log("turretRotateAngle: "+turretRotateAngle.eulerAngles);
-        // Debug.Log("gunRotateAngle: "+gunRotateAngle.eulerAngles);
         turret.rotation = Quaternion.Euler(0,turretRotateAngle.eulerAngles.y,0);
         launchPos.rotation = gunRotateAngle;
     }
@@ -356,13 +350,18 @@ public class Tank : MonoBehaviour
         if(ctrlType != CtrlType.AI)
             return;
 
-        //控制坦克移动(TODO)
-
+        //控制坦克移动
+        motor = enemyAI.GetMotor();
+        steeringAngle = enemyAI.GetSteering();
+        brake = enemyAI.GetBrake();
 
         //控制炮塔炮管转动
-        enemyAI.CalculateTurretRotate( out turretRotateAngle,out gunRotateAngle);
+        if(enemyAI.IsTakeTarget())
+        {
+            enemyAI.CalculateTurretRotate( out turretRotateAngle,out gunRotateAngle);
 
-        RotateTurret();
+            RotateTurret();
+        }
     }
 
     #endregion
