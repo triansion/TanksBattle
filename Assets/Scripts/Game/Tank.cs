@@ -249,6 +249,7 @@ public class Tank : MonoBehaviour
     private Transform launchPos;
     private Quaternion turretRotateAngle = Quaternion.Euler(0,0,0);
     private Quaternion gunRotateAngle = Quaternion.Euler(0,0,0);
+    // private float turretRotateSpeed = 0.5f;
 
     /// <summary>
     /// 根据摄像机视野转向控制炮塔转向
@@ -337,6 +338,8 @@ public class Tank : MonoBehaviour
         gunDir = raycastHitPos - launchPos.position;
         turretRotateAngle = Quaternion.LookRotation(turretDir);
         gunRotateAngle = Quaternion.LookRotation(gunDir);
+        if(turretRotateAngle.eulerAngles.y > 180f)
+            turretRotateAngle.eulerAngles -= new Vector3(0,360f,0);
         // Debug.Log("玩家炮塔旋转角度:"+turretRotateAngle.eulerAngles);
         // Debug.Log("玩家炮管旋转角度:"+gunRotateAngle.eulerAngles);
     }

@@ -103,6 +103,8 @@ public class TankShot : MonoBehaviour
             enemyAI = transform.GetComponent<EnemyAI>();
         else
             enemyAI = null;
+        
+        Debug.Log("TanShot Start enemyAI == null: "+enemyAI == null);
     }
 
     // Update is called once per frame
@@ -158,6 +160,12 @@ public class TankShot : MonoBehaviour
         //AI控制敌人发射炮弹
         else if(ctrlType == CtrlType.AI)
         {
+            if(enemyAI == null)
+            {
+                enemyAI = transform.GetComponent<EnemyAI>();
+                if(enemyAI == null)
+                    return;
+            }
             if(enemyAI.IsShouldShot())
             {
                 currentLaunchForce = maxLaunchForce;

@@ -71,7 +71,9 @@ public class AIPath
 
     public void GenerateWayPointsByNavMesh(Transform srcPos, Transform destPos, bool isLoop = false, bool isNeedReset = true)
     {
-        navMeshPath = new NavMeshPath();
+        if(navMeshPath == null)
+            navMeshPath = new NavMeshPath();
+            
         bool hasCalculatePath = NavMesh.CalculatePath(srcPos.position,destPos.position,NavMesh.AllAreas,navMeshPath);
 
         if(!hasCalculatePath)

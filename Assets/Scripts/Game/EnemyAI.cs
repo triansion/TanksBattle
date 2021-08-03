@@ -61,12 +61,14 @@ public class EnemyAI : MonoBehaviour
 
     private void PatrolStart()
     {
-
+        m_status = Status.Patrol;
     }
 
     private void AttackStart()
     {
-
+        m_status = Status.Attack;
+        if(aIPath != null && target != null)
+            aIPath.GenerateWayPointsByNavMesh(transform,target.transform);
     }
 
     private void EscapeStart()
@@ -77,11 +79,12 @@ public class EnemyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(aiTank != null || aiTank.ctrlType != CtrlType.AI)
+        if(aiTank == null || aiTank.ctrlType != CtrlType.AI)
             return;
 
         if(m_status == Status.Patrol)
         {
+            Debug.Log("巡逻中");
             PatrolUpdate();
         }
         else if(m_status == Status.Attack)
@@ -94,13 +97,53 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    private float lastUpdatePatrolWayPointTime = float.MinValue;
+    private float updatePatrolWayPointInterval = 8f;
+    private float currentUpdateInterval = float.MinValue;
+
     private void PatrolUpdate()
     {
-        
+        if(target != null)
+        {
+            Debug.Log("巡逻过程中发现目标,开始进攻");
+            ChangeAIStatus(Status.Attack);
+            return;
+        }
+
+        currentUpdateInterval = Time.time - lastUpdatePatrolWayPointTime;
+        if(currentUpdateInterval < updatePatrolWayPointInterval)
+            return;
+        // lastUpdatePatrolWayPointTime = Time.time;
+        Debug.Log("巡逻中 currentUpdateInterval: "+currentUpdateInterval);
+        if(aIPath != null && wayPointsParent != null && wayPointsParent.childCount > 0)
+        {
+            Debug.Log("巡逻中");
+            if(aIPath.IsReachWayPoint(transform))
+            {
+                Debug.Log("更新巡逻路点");
+                InitAIWayPoints();
+                lastUpdatePatrolWayPointTime = Time.time;
+            }
+        }
+
     }
     private void AttackUpdate()
     {
-        
+        if(target == null)
+        {
+            ChangeAIStatus(Status.Patrol);
+            return;
+        }
+
+        currentUpdateInterval = Time.time - lastUpdatePatrolWayPointTime;
+        if(currentUpdateInterval < updatePatrolWayPointInterval)
+            return;
+
+        if(aIPath != null)
+        {
+            aIPath.GenerateWayPointsByNavMesh(transform,target.transform);
+            lastUpdatePatrolWayPointTime = Time.time;
+        }
     }
     private void EscapeUpdate()
     {
@@ -229,26 +272,40 @@ public class EnemyAI : MonoBehaviour
     #endregion
 
     #region AI寻路逻辑
-    
+    private int currentWayPointIndex = -1;
+    private Transform  wayPointsParent;
+    private Transform wayPoint;
+    private int tempIndex = -1;
     private void InitAIWayPoints()
     {
-        Transform wayPointsParent = GameObject.Find("WayPointsParent").transform;
+        if(wayPointsParent == null)
+            wayPointsParent = GameObject.Find("WayPointsParent").transform;
 
         // aIPath.GenerateWayPoints(wayPointsParent,true);
 
-        // Transform wayPoint = wayPointsParent.GetChild(0);
-        int wayPointCount = wayPointsParent.childCount;
-        if(wayPointCount > 0)
+        // int wayPointCount = wayPointsParent.childCount;
+        // if(wayPointCount > 0)
+        // {
+        //     Transform wayPoint;
+        //     for(int i = 0; i < wayPointCount; i++)
+        //     {
+        //         wayPoint = wayPointsParent.GetChild(i);
+        //         if(i == 0)
+        //             aIPath.GenerateWayPointsByNavMesh(transform,wayPoint,true,true);
+        //         else
+        //             aIPath.GenerateWayPointsByNavMesh(wayPointsParent.GetChild(i-1),wayPoint,true,false);
+        //     }
+        // }
+        if(wayPointsParent != null && wayPointsParent.childCount > 0)
         {
-            Transform wayPoint;
-            for(int i = 0; i < wayPointCount; i++)
+            do
             {
-                wayPoint = wayPointsParent.GetChild(i);
-                if(i == 0)
-                    aIPath.GenerateWayPointsByNavMesh(transform,wayPoint,true,true);
-                else
-                    aIPath.GenerateWayPointsByNavMesh(wayPointsParent.GetChild(i-1),wayPoint,true,false);
-            }
+                tempIndex = Random.Range(0,wayPointsParent.childCount);
+            } while (tempIndex == currentWayPointIndex);
+            currentWayPointIndex = tempIndex;
+            wayPoint = wayPointsParent.GetChild(currentWayPointIndex);
+            if(aIPath != null)
+                aIPath.GenerateWayPointsByNavMesh(transform,wayPoint);
         }
     }
     

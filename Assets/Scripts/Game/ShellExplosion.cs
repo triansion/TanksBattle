@@ -62,7 +62,7 @@ public class ShellExplosion : MonoBehaviour
         {
             Rigidbody targetRigidbody = colliders[i].GetComponent<Rigidbody>();
 
-            if(targetRigidbody == null)
+            if(targetRigidbody == null || targetRigidbody.gameObject == launcher)
                 continue;
 
             targetRigidbody.AddExplosionForce(explosionForce,transform.position,explosionRadius);
