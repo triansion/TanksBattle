@@ -351,7 +351,7 @@ public class Tank : MonoBehaviour
         isRayCast = Physics.Raycast(gunRay,out gunRaycastHit,maxRayCastDistance);
         if(isRayCast)
         {
-            if(gunRaycastHit.collider.tag == "Shell")
+            if(gunRaycastHit.collider.tag == "Shell" || gunRaycastHit.collider.gameObject == gameObject)
                 return;
             Debug.DrawLine(gunRay.origin,gunRaycastHit.point,Color.black);
             gunRaycastHitPos = gunRaycastHit.point;
@@ -366,7 +366,10 @@ public class Tank : MonoBehaviour
     private Vector3 actualExplorePosInScreen;
     private Rect actualAimRect;
     private void DrawActualAim()
-    {
+    {   
+        if(ctrlType != CtrlType.player)
+            return;
+
         if(actualShellAim == null)
             return;
 
@@ -407,12 +410,21 @@ public class Tank : MonoBehaviour
         brake = enemyAI.GetBrake();
 
         //控制炮塔炮管转动
-        if(enemyAI.IsTakeTarget())
-        {
+        // if(enemyAI.IsTakeTarget())
+        // {
             enemyAI.CalculateTurretRotate( out turretRotateAngle,out gunRotateAngle);
 
             RotateTurret();
-        }
+        // }
+    }
+
+    public bool CheckAICanShot()
+    {
+        // Debug.Log("AI的炮管待旋转角度: "+turretNeedRotateAngle);
+        if(turretNeedRotateAngle <= 30 || turretNeedRotateAngle >= 330)
+            return true;
+        else
+            return false;
     }
 
     #endregion

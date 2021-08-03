@@ -62,6 +62,7 @@ public class EnemyAI : MonoBehaviour
     private void PatrolStart()
     {
         m_status = Status.Patrol;
+        InitAIWayPoints();
     }
 
     private void AttackStart()
@@ -97,9 +98,9 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    private float lastUpdatePatrolWayPointTime = float.MinValue;
+    private float lastUpdatePatrolWayPointTime = 0;
     private float updatePatrolWayPointInterval = 5f;
-    private float currentUpdateInterval = float.MinValue;
+    private float currentUpdateInterval = 0;
 
     private void PatrolUpdate()
     {
@@ -120,7 +121,7 @@ public class EnemyAI : MonoBehaviour
             // Debug.Log("巡逻中");
             if(aIPath.IsReachWayPoint(transform))
             {
-                // Debug.Log("更新巡逻路点");
+                Debug.Log("到达指定目标后,更新巡逻路点");
                 InitAIWayPoints();
                 lastUpdatePatrolWayPointTime = Time.time;
             }
@@ -131,6 +132,7 @@ public class EnemyAI : MonoBehaviour
     {
         if(target == null)
         {
+            Debug.Log("目标丢失或死亡后重新将ai的状态切换成巡逻状态");
             ChangeAIStatus(Status.Patrol);
             return;
         }
@@ -241,17 +243,19 @@ public class EnemyAI : MonoBehaviour
     {
         if(target == null)
         {
-            turretRotateAngle = Quaternion.Euler(aiTank.transform.forward);
-            gunRotateAngle = Quaternion.Euler(aiTank.transform.forward);
+            // turretRotateAngle = Quaternion.Euler(aiTank.transform.forward);
+            // gunRotateAngle = Quaternion.Euler(aiTank.transform.forward);
+            turretDir = aiTank.transform.forward;
+            gunDir = aiTank.transform.forward;
         }
         else
         {
-            turretDir = target.transform.position + tankCenterPos - turret.position;
-            gunDir = target.transform.position + tankCenterPos - launchPos.position;
-            turretRotateAngle = Quaternion.LookRotation(turretDir);
-            gunRotateAngle = Quaternion.LookRotation(gunDir);
+            turretDir = (target.transform.position + tankCenterPos) - turret.position;
+            gunDir = (target.transform.position + tankCenterPos) - launchPos.position;
         }
-            // Debug.Log("AI炮塔旋转角度:"+turretRotateAngle.eulerAngles);
+
+        turretRotateAngle = Quaternion.LookRotation(turretDir);
+        gunRotateAngle = Quaternion.LookRotation(gunDir);
             // Debug.Log("AI炮管旋转角度:"+gunRotateAngle.eulerAngles);
     }
 
@@ -265,7 +269,7 @@ public class EnemyAI : MonoBehaviour
             return false;
         else
         {
-            return true;
+            return aiTank.CheckAICanShot();
         }
     }
 
