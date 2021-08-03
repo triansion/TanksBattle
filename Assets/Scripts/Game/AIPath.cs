@@ -10,7 +10,7 @@ public class AIPath
     public Vector3 currentWayPoint;
     public bool isLoop = false;
     public bool isFinish = false;
-    public float deviation = 5f;
+    public float deviation = 3f;
     private float distance = 0f;
     private NavMeshPath navMeshPath;
 
@@ -73,7 +73,7 @@ public class AIPath
     {
         if(navMeshPath == null)
             navMeshPath = new NavMeshPath();
-            
+
         bool hasCalculatePath = NavMesh.CalculatePath(srcPos.position,destPos.position,NavMesh.AllAreas,navMeshPath);
 
         if(!hasCalculatePath)

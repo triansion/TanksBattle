@@ -121,6 +121,9 @@ public class Tank : MonoBehaviour
     [Tooltip("UI层级中的敌人击杀图标")]
     public Texture2D enemyKilledIcon;
 
+    [Tooltip("实际发射炮弹的爆炸位置准星")]
+    public Texture2D actualShellAim;
+
     /// <summary>
     /// 前后方向上的输入增量
     /// </summary>
@@ -249,7 +252,8 @@ public class Tank : MonoBehaviour
     private Transform launchPos;
     private Quaternion turretRotateAngle = Quaternion.Euler(0,0,0);
     private Quaternion gunRotateAngle = Quaternion.Euler(0,0,0);
-    // private float turretRotateSpeed = 0.5f;
+    private float turretNeedRotateAngle = 0f;
+    private float turretRotateSpeed = 0.5f;
 
     /// <summary>
     /// 根据摄像机视野转向控制炮塔转向
@@ -266,8 +270,15 @@ public class Tank : MonoBehaviour
 
         // turret.GetChild(0).transform.localEulerAngles = new Vector3(cameraFollow.FollowAngleInVertical,0,0);
 
-        turret.rotation = Quaternion.Euler(0,turretRotateAngle.eulerAngles.y,0);
-        launchPos.rotation = gunRotateAngle;
+        // turret.rotation = Quaternion.Euler(0,turretRotateAngle.eulerAngles.y,0);
+        turretNeedRotateAngle = turret.eulerAngles.y - turretRotateAngle.eulerAngles.y;
+        if(turretNeedRotateAngle < 0) turretNeedRotateAngle += 360;
+        if(turretNeedRotateAngle > turretRotateSpeed && turretNeedRotateAngle < 180)
+            turret.Rotate(0,-turretRotateSpeed,0);
+        else if(turretNeedRotateAngle > 180 && turretNeedRotateAngle < 360 - turretRotateSpeed)
+            turret.Rotate(0,turretRotateSpeed,0);
+        // launchPos.rotation = gunRotateAngle;
+        launchPos.localEulerAngles = new Vector3(gunRotateAngle.eulerAngles.x,launchPos.localEulerAngles.y,launchPos.localEulerAngles.z);
     }
     
     #region 玩家操控坦克逻辑
@@ -302,6 +313,7 @@ public class Tank : MonoBehaviour
             }
         }
         CalculateTargetSignPos();
+        // CalculateShellExplorePos();
 
         CalculateTurretRotate();
 
@@ -327,6 +339,42 @@ public class Tank : MonoBehaviour
             // Debug.DrawLine(screenRay.origin,screenRay.GetPoint(maxRayCastDistance),Color.red);
             raycastHitPos = screenRay.GetPoint(maxRayCastDistance);
         }
+    }
+    
+    private Ray gunRay;
+    private RaycastHit gunRaycastHit;
+    private Vector3 gunRaycastHitPos;
+    private bool isRayCast = false;
+    private void CalculateShellExplorePos()
+    {
+        gunRay = new Ray(launchPos.position,launchPos.forward);
+        isRayCast = Physics.Raycast(gunRay,out gunRaycastHit,maxRayCastDistance);
+        if(isRayCast)
+        {
+            if(gunRaycastHit.collider.tag == "Shell")
+                return;
+            Debug.DrawLine(gunRay.origin,gunRaycastHit.point,Color.black);
+            gunRaycastHitPos = gunRaycastHit.point;
+        }
+        else
+        {
+            Debug.DrawLine(gunRay.origin,gunRay.GetPoint(maxRayCastDistance),Color.red);
+            gunRaycastHitPos = gunRay.GetPoint(maxRayCastDistance);
+        }
+    }
+
+    private Vector3 actualExplorePosInScreen;
+    private Rect actualAimRect;
+    private void DrawActualAim()
+    {
+        if(actualShellAim == null)
+            return;
+
+        CalculateShellExplorePos();
+
+        actualExplorePosInScreen = Camera.main.WorldToScreenPoint(gunRaycastHitPos);
+        actualAimRect = new Rect(actualExplorePosInScreen.x - 25,Screen.height - actualExplorePosInScreen.y - 25,50,50);
+        GUI.DrawTexture(actualAimRect,actualShellAim,ScaleMode.ScaleToFit,true,0,Color.red,0,0);
     }
 
     private void CalculateTurretRotate()
@@ -464,12 +512,13 @@ public class Tank : MonoBehaviour
         killUIIconStartDrwaTime = Time.time;
     }
 
+    private Rect killIconRect;
     private void DrawKillIcon()
     {
         if(enemyKilledIcon != null && Time.time - killUIIconStartDrwaTime < 1)
         {
-            Rect rect = new Rect((Screen.width - enemyKilledIcon.width)/2,70,enemyKilledIcon.width,enemyKilledIcon.height);
-            GUI.DrawTexture(rect,enemyKilledIcon);
+            killIconRect = new Rect((Screen.width - enemyKilledIcon.width)/2,70,enemyKilledIcon.width,enemyKilledIcon.height);
+            GUI.DrawTexture(killIconRect,enemyKilledIcon);
         }
 
     }
@@ -501,5 +550,6 @@ public class Tank : MonoBehaviour
     void OnGUI()
     {
         DrawKillIcon();
+        DrawActualAim();
     }
 }

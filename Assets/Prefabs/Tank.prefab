@@ -5610,6 +5610,7 @@ MonoBehaviour:
     type: 3}
   healthSlider: {fileID: 2520078561375181218}
   enemyKilledIcon: {fileID: 2800000, guid: 41c6f94d80f9e034a9c63dcf97d30f5c, type: 3}
+  actualShellAim: {fileID: 2800000, guid: 0d1b0f9deaa114340a4d75462bbb22d9, type: 3}
 --- !u!114 &6769650903405208029
 MonoBehaviour:
   m_ObjectHideFlags: 0

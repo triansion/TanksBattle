@@ -84,7 +84,7 @@ public class EnemyAI : MonoBehaviour
 
         if(m_status == Status.Patrol)
         {
-            Debug.Log("巡逻中");
+            // Debug.Log("巡逻中");
             PatrolUpdate();
         }
         else if(m_status == Status.Attack)
@@ -98,7 +98,7 @@ public class EnemyAI : MonoBehaviour
     }
 
     private float lastUpdatePatrolWayPointTime = float.MinValue;
-    private float updatePatrolWayPointInterval = 8f;
+    private float updatePatrolWayPointInterval = 5f;
     private float currentUpdateInterval = float.MinValue;
 
     private void PatrolUpdate()
@@ -114,13 +114,13 @@ public class EnemyAI : MonoBehaviour
         if(currentUpdateInterval < updatePatrolWayPointInterval)
             return;
         // lastUpdatePatrolWayPointTime = Time.time;
-        Debug.Log("巡逻中 currentUpdateInterval: "+currentUpdateInterval);
+        // Debug.Log("巡逻中 currentUpdateInterval: "+currentUpdateInterval);
         if(aIPath != null && wayPointsParent != null && wayPointsParent.childCount > 0)
         {
-            Debug.Log("巡逻中");
+            // Debug.Log("巡逻中");
             if(aIPath.IsReachWayPoint(transform))
             {
-                Debug.Log("更新巡逻路点");
+                // Debug.Log("更新巡逻路点");
                 InitAIWayPoints();
                 lastUpdatePatrolWayPointTime = Time.time;
             }
@@ -339,9 +339,9 @@ public class EnemyAI : MonoBehaviour
 
         CalculateAITankToWayPointDir();
 
-        if(aiTankToWayPointDirInLocal.x > 1)
+        if(aiTankToWayPointDirInLocal.x > 3)
             return aiTank.maxSteeringAngle;
-        else if(aiTankToWayPointDirInLocal.x < -1)
+        else if(aiTankToWayPointDirInLocal.x < -3)
             return -aiTank.maxSteeringAngle;
         else
             return 0;
