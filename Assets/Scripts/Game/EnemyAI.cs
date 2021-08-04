@@ -211,7 +211,9 @@ public class EnemyAI : MonoBehaviour
         nearbyColliders = Physics.OverlapSphere(transform.position,searchDistance,LayerMask.GetMask("Tank"));
         for(int i=0;i<nearbyColliders.Length;i++)
         {
-            if(nearbyColliders[i].transform.tag != "Player")
+            // if(nearbyColliders[i].transform.tag != "Player")
+            //     continue;
+            if(BattleManager.instance.IsSameCamp(gameObject,nearbyColliders[i].gameObject))
                 continue;
 
             Tank playerTank = nearbyColliders[i].gameObject.GetComponent<Tank>();

@@ -37,14 +37,14 @@ public class CameraFollow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GameObject playerTank = GameObject.Find("Tank");
-        if(playerTank != null)
-        {
-            SetTarget(playerTank);
-            distanceInY = followInterval * Mathf.Sin((Mathf.PI/180)*followAngleInVertical);
-            distanceInZ = followInterval * Mathf.Cos((Mathf.PI/180)*followAngleInVertical);
-            followToTarget();
-        }
+        // GameObject playerTank = GameObject.Find("Tank");
+        // if(playerTank != null)
+        // {
+        //     SetTarget(playerTank);
+        //     distanceInY = followInterval * Mathf.Sin((Mathf.PI/180)*followAngleInVertical);
+        //     distanceInZ = followInterval * Mathf.Cos((Mathf.PI/180)*followAngleInVertical);
+        //     followToTarget();
+        // }
         // if(FollowTarget != null)
         // {
         //     if(FollowTarget.Find("TankRenderers/TankTurret/Camerapoint") != null)
@@ -54,6 +54,17 @@ public class CameraFollow : MonoBehaviour
         //     followToTarget();
         // }
         
+    }
+
+    public void SetFollowTargetTank(GameObject targetTank)
+    {
+        if(targetTank != null)
+        {
+            SetTarget(targetTank);
+            distanceInY = followInterval * Mathf.Sin((Mathf.PI/180)*followAngleInVertical);
+            distanceInZ = followInterval * Mathf.Cos((Mathf.PI/180)*followAngleInVertical);
+            followToTarget();
+        }
     }
 
     private void SetTarget(GameObject target)

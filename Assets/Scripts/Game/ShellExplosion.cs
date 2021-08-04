@@ -62,7 +62,7 @@ public class ShellExplosion : MonoBehaviour
         {
             Rigidbody targetRigidbody = colliders[i].GetComponent<Rigidbody>();
 
-            if(targetRigidbody == null || targetRigidbody.gameObject == launcher)
+            if(targetRigidbody == null || targetRigidbody.gameObject == launcher || BattleManager.instance.IsSameCamp(launcher,targetRigidbody.gameObject))
                 continue;
 
             targetRigidbody.AddExplosionForce(explosionForce,transform.position,explosionRadius);

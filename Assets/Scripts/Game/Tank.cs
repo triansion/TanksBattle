@@ -514,8 +514,11 @@ public class Tank : MonoBehaviour
         if(currentHp <= 0 && !isDead)
         {
             healthSlider.value = 0;
-            StartDrawKillIcon();
+            if(ctrlType == CtrlType.player)
+                StartDrawKillIcon();
             OnDead();
+
+            BattleManager.instance.IsWin(attacker);
         }
     }
 
