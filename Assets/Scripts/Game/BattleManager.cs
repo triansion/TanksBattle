@@ -53,7 +53,7 @@ public class BattleManager : MonoBehaviour
         }
         return 0;
     }
-
+    
     public bool IsSameCamp(GameObject tank1,GameObject tank2)
     {
         if(tank1 == null || tank2 == null)
@@ -61,6 +61,9 @@ public class BattleManager : MonoBehaviour
         return GetCamp(tank1) == GetCamp(tank2);
     }
 
+
+    private int winCamp = -1;
+    private BattleTank playerBattleTank;
     public bool IsWin(int camp)
     {
         int count = battleTanks.Length;
@@ -73,7 +76,11 @@ public class BattleManager : MonoBehaviour
             }
         }
         Debug.Log("阵营"+camp+"获胜");
+        winCamp = camp;
         aimCanvas.SetActive(false);
+        bool isPlayerWin = IsPlayerWin();
+        PanelManager.Instance().OpenPanel<GameOverPanel>("GameOverPanel",PanelLayer.Tips,null,isPlayerWin);
+        ClearAllTank();
         return true;
     }
 
@@ -86,6 +93,11 @@ public class BattleManager : MonoBehaviour
             return false;
         }
         return IsWin(camp);
+    }
+
+    private bool IsPlayerWin()
+    {
+        return playerBattleTank.camp == winCamp;
     }
 
     public void ClearAllTank()
@@ -108,6 +120,11 @@ public class BattleManager : MonoBehaviour
                 Destroy(tankObjs[i]);
             }
         }
+    }
+
+    public void HideAimCanvas()
+    {
+        aimCanvas.SetActive(false);
     }
 
     public void StartTowCampBattle(int n1 = 2,int n2 = 2)
@@ -146,6 +163,7 @@ public class BattleManager : MonoBehaviour
         Tank playerTank = battleTanks[playerTankIndex].tank;
         playerTank.transform.tag = "Player";
         playerTank.ctrlType = CtrlType.player;
+        playerBattleTank = battleTanks[playerTankIndex];
 
         CameraFollow cameraFollow = Camera.main.transform.GetComponent<CameraFollow>();
         if(cameraFollow != null)

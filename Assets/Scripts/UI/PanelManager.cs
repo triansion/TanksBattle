@@ -59,7 +59,7 @@ public class PanelManager : Singleton<PanelManager>
         return prefab;
     }
 
-    public T OpenPanel<T>(string panelPrefabName,PanelLayer layer = PanelLayer.Panel,Transform panelParent = null,object[] args = null) where T : PanelBase
+    public T OpenPanel<T>(string panelPrefabName,PanelLayer layer = PanelLayer.Panel,Transform panelParent = null,params object[] args) where T : PanelBase
     {
         var type = typeof(T);
         if(!mActivePanels.ContainsKey(type))

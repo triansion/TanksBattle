@@ -34,6 +34,6 @@ public class StartPanel : PanelBase
     
     public void OnQuitBtnClicked()
     {
-        
+        Application.Quit();
     }
 }

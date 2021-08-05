@@ -27,7 +27,7 @@ public class PanelBase : MonoBehaviour
     #endregion
 
     #region UI面板操作
-    public void Open(GameObject panelInstance,Transform parent,object[] args)
+    public void Open(GameObject panelInstance,Transform parent,params object[] args)
     {
         this.args = args;
 

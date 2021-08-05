@@ -32,8 +32,14 @@ public class CameraFollow : MonoBehaviour
     private float cameraZoomSpeed = 1f;
     private float maxFollowInterval = 10f;
     private float minFollowInterval = 5f;
+    private Vector3 originPos;
+    private Vector3 originEularAngle;
 
-
+    void Awake()
+    {
+        originPos = transform.position;
+        originEularAngle = transform.eulerAngles;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -54,6 +60,12 @@ public class CameraFollow : MonoBehaviour
         //     followToTarget();
         // }
         
+    }
+
+    public void SetObservePos()
+    {
+        transform.position = originPos;
+        transform.eulerAngles = originEularAngle;
     }
 
     public void SetFollowTargetTank(GameObject targetTank)

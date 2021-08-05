@@ -172,7 +172,8 @@ public class Tank : MonoBehaviour
     {
         turret = transform.Find("TankRenderers/TankTurret");
 
-        cameraFollow = Camera.main.transform.GetComponent<CameraFollow>();
+        if(ctrlType == CtrlType.player)
+            cameraFollow = Camera.main.transform.GetComponent<CameraFollow>();
         // audioSource = transform.GetComponent<AudioSource>();
         if(audioSource != null)
             originPitch = audioSource.pitch;
@@ -515,7 +516,12 @@ public class Tank : MonoBehaviour
         {
             healthSlider.value = 0;
             if(ctrlType == CtrlType.player)
+            {
                 StartDrawKillIcon();
+                cameraFollow.FollowTarget = null;
+                cameraFollow.SetObservePos();
+                BattleManager.instance.HideAimCanvas();
+            }
             OnDead();
 
             BattleManager.instance.IsWin(attacker);

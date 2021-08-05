@@ -64,6 +64,7 @@
      <Compile Include="Assets\Scripts\Game\TankHealth.cs" />
      <Compile Include="Assets\Scripts\Game\TankShot.cs" />
      <Compile Include="Assets\Scripts\UI\GameIntroducePanel.cs" />
+     <Compile Include="Assets\Scripts\UI\GameOverPanel.cs" />
      <Compile Include="Assets\Scripts\UI\PanelBase.cs" />
      <Compile Include="Assets\Scripts\UI\PanelManager.cs" />
      <Compile Include="Assets\Scripts\UI\StartPanel.cs" />
