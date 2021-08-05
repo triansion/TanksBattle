@@ -27,7 +27,7 @@ public class CameraFollow : MonoBehaviour
 
     private float cameraRotateSpeed = 20f;
     private float maxAngleInVertical = 30f;
-    private float minAngleInVertical = -30;
+    private float minAngleInVertical = -30f;
 
     private float cameraZoomSpeed = 1f;
     private float maxFollowInterval = 10f;

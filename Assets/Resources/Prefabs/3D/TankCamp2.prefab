@@ -10546,7 +10546,7 @@ MonoBehaviour:
     rightWheel: {fileID: 1694808149860491825}
     isMotor: 1
     isSteering: 0
-  maxMotor: 1500
+  maxMotor: 1000
   maxBrake: 5000
   maxSteeringAngle: 45
   audioSource: {fileID: 4167831823186934490}

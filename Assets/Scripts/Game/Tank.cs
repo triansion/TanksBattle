@@ -253,7 +253,7 @@ public class Tank : MonoBehaviour
     private Quaternion turretRotateAngle = Quaternion.Euler(0,0,0);
     private Quaternion gunRotateAngle = Quaternion.Euler(0,0,0);
     private float turretNeedRotateAngle = 0f;
-    private float turretRotateSpeed = 0.5f;
+    private float turretRotateSpeed = 1f;
 
     /// <summary>
     /// 根据摄像机视野转向控制炮塔转向

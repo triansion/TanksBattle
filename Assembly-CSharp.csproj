@@ -53,15 +53,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\Common\Singleton.cs" />
      <Compile Include="Assets\Scripts\Game\AIPath.cs" />
      <Compile Include="Assets\Scripts\Game\BattleManager.cs" />
      <Compile Include="Assets\Scripts\Game\EnemyAI.cs" />
+     <Compile Include="Assets\Scripts\Game\GameManager.cs" />
      <Compile Include="Assets\Scripts\Game\Shell.cs" />
      <Compile Include="Assets\Scripts\Game\ShellExplosion.cs" />
      <Compile Include="Assets\Scripts\Game\Tank.cs" />
      <Compile Include="Assets\Scripts\Game\TankHealth.cs" />
      <Compile Include="Assets\Scripts\Game\TankShot.cs" />
+     <Compile Include="Assets\Scripts\UI\GameIntroducePanel.cs" />
+     <Compile Include="Assets\Scripts\UI\PanelBase.cs" />
+     <Compile Include="Assets\Scripts\UI\PanelManager.cs" />
+     <Compile Include="Assets\Scripts\UI\StartPanel.cs" />
      <Compile Include="Assets\Scripts\Utils\CameraFollow.cs" />
+     <None Include="Assets\Font\Bowlby_One\FontLicense.txt" />
  <Reference Include="UnityEngine.Purchasing">
  <HintPath>F:/TanksBattle/TanksBattle/Library/ScriptAssemblies/UnityEngine.Purchasing.dll</HintPath>
  </Reference>

@@ -16,10 +16,13 @@ public class BattleManager : MonoBehaviour
     // Start is called before the first frame update
     public static BattleManager instance;
 
+    public GameObject aimCanvas;
+
     void Start()
     {
         instance = this;
-        StartTowCampBattle();
+        // StartTowCampBattle();
+        // aimCanvas = GameObject.Find("AimCanvas");
     }
 
     // Update is called once per frame
@@ -70,6 +73,7 @@ public class BattleManager : MonoBehaviour
             }
         }
         Debug.Log("阵营"+camp+"获胜");
+        aimCanvas.SetActive(false);
         return true;
     }
 
@@ -146,6 +150,8 @@ public class BattleManager : MonoBehaviour
         CameraFollow cameraFollow = Camera.main.transform.GetComponent<CameraFollow>();
         if(cameraFollow != null)
             cameraFollow.SetFollowTargetTank(playerTank.gameObject);
+
+        aimCanvas.SetActive(true);
     }
 
     private void GenerateTank(GameObject tankPrefab,int camp,int index,Vector3 birthPos)
