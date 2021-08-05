@@ -62,7 +62,7 @@ LightmapSettings:
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
     m_CompAOExponentDirect: 0
-    m_Padding: 2
+    m_Padding: 20
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
     m_TextureCompression: 1
@@ -1677,6 +1677,11 @@ PrefabInstance:
     - target: {fileID: 874982817, guid: 901765858b0b92a4fbef1c5875dcf508, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5084525564294124897, guid: 901765858b0b92a4fbef1c5875dcf508,
+        type: 3}
+      propertyPath: m_StitchLightmapSeams
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5802622722798066932, guid: 901765858b0b92a4fbef1c5875dcf508,
         type: 3}
